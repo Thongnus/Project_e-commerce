@@ -1,0 +1,61 @@
+version: '3'
+services:
+  spring-boot-app:
+    build:
+     # context: ../API
+      dockerfile: Dockerfile
+
+    healthcheck:
+      test: ["CMD","executable", "arg"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+     # start_period: 30s
+       
+    ports:
+      - "8085:8080"
+    depends_on:
+      - mysql-db
+       
+   #       condition: service_healthy
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/projectbanhang?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: 'true'
+      SPRING_JPA_SHOW_SQL: 'true'
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: 'org.hibernate.dialect.MySQL8Dialect'
+      SPRING_JPA_HIBERNATE_DDL_AUTO: 'none'
+
+  mysql-db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1
+      MYSQL_DATABASE: projectbanhang
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3307:3306"
+    restart: always
+  # healthcheck:
+  #    test: [ "CMD" ]
+    #  interval: 10s
+     # timeout: 5s
+      #retries: 5
+    volumes:
+      - app-data:/var/lib/mysql  
+
+  fe:
+    build:
+      context: ../web api nam 3 ki2
+      dockerfile: Dockerfile
+    # image: frontend:latest 
+    ports:
+      - "81:80"
+    # environment:
+    #   URL: http://spring-boot-app:8080
+
+volumes:
+ app-data:
+    # external:true
