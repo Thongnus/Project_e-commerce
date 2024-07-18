@@ -11,6 +11,7 @@ import com.example.api.Service.Serviceimpl.Product_impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,9 +64,7 @@ public class quanlyproductController {
 
         // Lưu Product vào cơ sở dữ liệu
         Product savedProduct = productService.createProduct(product);
-        String name = category.getNameCategory();
-        String key= redisService.getKeyFrom(name);
-        redisService.delete(key);
+
         return ResponseEntity.ok(savedProduct);
     }
 // phan trang product
@@ -81,9 +80,9 @@ public class quanlyproductController {
     }
 
     @GetMapping("/getAll")
-    public  ResponseEntity<?> getAll(){
+    public  ArrayList<Product> getAll(){
 
-        return  ResponseEntity.ok(productService.getAllProducts());
+        return  productService.getAllProducts();
     }
 @GetMapping("/category/{categoryname}")
 public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") String name){
@@ -92,7 +91,7 @@ public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") Stri
   List<Product> list= productService.getAllProductByCategory(category);
   if(list.isEmpty()){
 
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("không tìm thấy ");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(" Not found by name"+name);
   }else {
   return  ResponseEntity.ok(list);}
 }
@@ -110,7 +109,7 @@ public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") Stri
     }
     // Phương thức cập nhật sản phẩm
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+   // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> updateProduct(@PathVariable("id") int id,
                                                  @RequestParam("title") String title,
                                                  @RequestParam("price") int price,
@@ -138,7 +137,7 @@ public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") Stri
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
-        return ResponseEntity.ok("xóa thành công");
+        return ResponseEntity.ok("delete success");
     }
     @GetMapping("/getlimit")
     public ResponseEntity<?> getlimit( )

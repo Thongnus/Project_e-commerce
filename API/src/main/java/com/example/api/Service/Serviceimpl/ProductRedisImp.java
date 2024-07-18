@@ -51,4 +51,9 @@ public class ProductRedisImp implements ProductRedis_Service {
     public void delete(String key) {
         redisService.delete_key(key);
     }
+
+    @Override
+    public ArrayList<Product> getallProduct() {
+        return null;
+    }
 }

@@ -1,13 +1,14 @@
 package com.example.api.Service.Serviceimpl;
 
+import com.example.api.Dto.CategoryDto;
 import com.example.api.Entity.Category;
 import com.example.api.Reponsitory.Category_Reponsitory;
 import com.example.api.Service.Category_Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Service
 public class Category_impl implements Category_Service {
@@ -16,9 +17,13 @@ public class Category_impl implements Category_Service {
 
     @Override
     public ArrayList<Category> getALL() {
-        return (ArrayList<Category>) category_reponsitory.findAll();
+        return     (ArrayList<Category>) category_reponsitory.findAll();
     }
+    @Override
 
+    public ArrayList<CategoryDto> getALLdto() {
+        return     (ArrayList<CategoryDto>) category_reponsitory.getAll();
+    }
     @Override
     public Category findById(int id) {
         return category_reponsitory.findById(id);
