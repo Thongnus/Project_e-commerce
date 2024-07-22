@@ -23,29 +23,29 @@ public class Product_impl implements Product_Service {
     @Autowired
     Product_Reponsitory productReponsitory;
     @Override
-    @CacheEvict(value = "products",allEntries = true)
+   // @CacheEvict(value = "products",allEntries = true)
         public Product createProduct(Product product)   {
             return productReponsitory.save(product);
         }
 
     @Override
-    @Cacheable(value = "product",key = "#id")
+//    @Cacheable(value = "product",key = "#id")
     public Optional<Product> getProductbyId(int id) {
         return productReponsitory.findById(id);
     }
 
 
     @Override
-    @Cacheable(value = "products" )
+   // @Cacheable(value = "products" )
     public ArrayList<Product> getAllProducts() {
         System.out.println("Get Data");
         return (ArrayList<Product>) productReponsitory.findAll();
     }
 
     @Override
-@Caching(put = @CachePut(value = "product",key = "#id"),
-           evict = @CacheEvict(value = "products",allEntries = true)
-        )
+//@Caching(put = @CachePut(value = "product",key = "#id"),
+  //         evict = @CacheEvict(value = "products",allEntries = true)
+ //       )
     public Product updateProduct(int id, Product newProduct) {
         Optional<Product> optionalProduct = productReponsitory.findById(id);
         if (optionalProduct.isPresent()) {
@@ -67,14 +67,14 @@ public class Product_impl implements Product_Service {
     }
 
     @Override
-    @Caching(evict ={ @CacheEvict(value = "products",allEntries = true),
-        @CacheEvict(value = "product",key = "#id")})
+   // @Caching(evict ={ @CacheEvict(value = "products",allEntries = true),
+  //      @CacheEvict(value = "product",key = "#id")})
     public void deleteProduct(int id) {
         productReponsitory.deleteById(id);
     }
 
     @Override
-    @Cacheable(value = "product",key = "#id")
+   //@Cacheable(value = "product",key = "#id")
     public Optional<Product> findbyId(int id) {
         return productReponsitory.findById(id);
     }

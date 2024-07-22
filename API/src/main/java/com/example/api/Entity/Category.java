@@ -1,5 +1,6 @@
 package com.example.api.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class Category  {
     int id;
     @Column(name = "name")
     String nameCategory;
-    @JsonIgnore
+    @JsonBackReference
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<Product> products;
 

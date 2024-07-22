@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 @Slf4j
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api-product")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class quanlyproductController {
     @Autowired
@@ -79,11 +79,7 @@ public class quanlyproductController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/getAll")
-    public  ArrayList<Product> getAll(){
 
-        return  productService.getAllProducts();
-    }
 @GetMapping("/category/{categoryname}")
 public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") String name){
         Category category = categoryService.findByName(name);
@@ -95,11 +91,7 @@ public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") Stri
   }else {
   return  ResponseEntity.ok(list);}
 }
-    // Phương thức lấy tất cả sản phẩm
-    //@GetMapping
-   // public ArrayList<Product> getAllProducts() {
-     //   return productService.getAllProducts();
-   // }
+
     // Phương thức lấy sản phẩm theo ID
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable int id) {
@@ -134,7 +126,7 @@ public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") Stri
 
     // Phương thức xóa sản phẩm
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+   // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("delete success");
@@ -153,6 +145,23 @@ public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") Stri
         List<Product> searchResult = productService.search(keyword,category);
         return ResponseEntity.ok(searchResult);
     }
+    @GetMapping("/getAll")
+    public  ResponseEntity<?>  getAll() throws JsonProcessingException {
+         ArrayList<Product> arr= redisService.getallProduct();
+         if(arr!=null&&!arr.isEmpty()){
+             return ResponseEntity.ok(arr);
+         }
+         else {
+          ArrayList<Product> getall=  productService.getAllProducts() ;
+           if(getall.isEmpty()){
+               return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found products");
+           }else {
+               redisService.SaveAllproduct(getall);
+               return  ResponseEntity.ok(getall);
+           }
+         }
+
+    }
     @GetMapping("/category/cache/{categoryname}")
     public ResponseEntity<?> getProductByNameCategory(@PathVariable("categoryname") String name) throws JsonProcessingException {
         Category category = categoryService.findByName(name);
@@ -167,8 +176,8 @@ public ResponseEntity<?> getProductByCategory(@PathVariable("categoryname") Stri
                 if(list.isEmpty()){
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found product of category"+name);
                 }else {
-                    String key= redisService.getKeyFrom(name);
-                redisService.SaveAllproductBycategory(key,list);
+                    //String key= redisService.getKeyFrom(name);
+                redisService.SaveAllproductBycategory(name,list);
                 return  ResponseEntity.ok(list);}
             }}
 

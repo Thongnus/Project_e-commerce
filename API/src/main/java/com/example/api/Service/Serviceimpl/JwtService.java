@@ -20,7 +20,7 @@ private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
  //tao token
 
-public  String generationtoken(User user){
+public  String generatetoken(User user){
     return Jwts.builder()
             .setSubject(user.getUsername())
             .setIssuedAt(new Date())
@@ -30,7 +30,7 @@ public  String generationtoken(User user){
 }
 
     // setclaims để đặt các thông tin muốn đưa vào jwt , ví dụ thêm email chẳng hạn
-    public  String generationrefeshtoken( User user){
+    public  String generaterefeshtoken( User user){
         return Jwts.builder()
 
                 .setSubject(user.getUsername())
@@ -51,7 +51,7 @@ public String extractUsernamefromToken(String token){
 
 
 }
-public String extractUsernamefromRefeshToke(String token){
+public String extractUsernamefromRefeshToken(String token){
     return Jwts.parserBuilder()
             .setSigningKey(secretKeyrefesh)
             .build()

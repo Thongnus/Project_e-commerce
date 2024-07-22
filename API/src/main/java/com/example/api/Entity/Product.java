@@ -17,6 +17,7 @@
     @Table(name = "Product")
     @AllArgsConstructor
     @RequiredArgsConstructor
+    @EntityListeners(Productlistener.class)
     public class Product {
         @Id
         @GeneratedValue(strategy =  GenerationType.IDENTITY)

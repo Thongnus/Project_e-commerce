@@ -7,14 +7,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
 @Repository
+
 public interface Product_Reponsitory extends JpaRepository<Product,Integer> {
 
     Page<Product> findAllByCategory(Category category,Pageable pageable);
     ArrayList<Product> findAllByCategory(Category category);
+
 
 
     ArrayList<Product> findFirst6By();

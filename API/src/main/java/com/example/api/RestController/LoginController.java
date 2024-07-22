@@ -45,8 +45,8 @@ public class LoginController {
                 User u = (User) authentication.getPrincipal();
 
             System.out.println(u);
-            String jwt = jwtService.generationtoken((User) authentication.getPrincipal());
-            String jwtrefesh =jwtService.generationrefeshtoken((User) authentication.getPrincipal());
+            String jwt = jwtService.generatetoken((User) authentication.getPrincipal());
+            String jwtrefesh =jwtService.generaterefeshtoken((User) authentication.getPrincipal());
             return ResponseEntity.ok(new LoginReponse(jwt,u.getRoles(),u.getId(),jwtrefesh, jwtService.getExpirationTime()));
         } catch (Exception e) {
             // Xác thực không thành công, trả về mã trạng thái 401 (Unauthorized)
@@ -60,15 +60,15 @@ public class LoginController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refresh token hết hạn");
             }
 
-            String username = jwtService.extractUsernamefromRefeshToke(refreshToken);
+            String username = jwtService.extractUsernamefromRefeshToken(refreshToken);
             User user = (User) userServiceimp.loadUserByUsername(username);
 
             return ResponseEntity.ok(
                     new LoginReponse(
-                            jwtService.generationtoken(user),
+                            jwtService.generatetoken(user),
                             user.getRoles(),
                             user.getId(),
-                            jwtService.generationrefeshtoken(user),
+                            jwtService.generaterefeshtoken(user),
                             jwtService.getExpirationTime()
                     )
             );

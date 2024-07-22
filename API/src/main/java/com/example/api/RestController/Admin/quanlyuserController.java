@@ -23,7 +23,7 @@ import java.util.Set;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @Slf4j
-@RequestMapping("/admin/users")
+@RequestMapping("/api-user")
 public class quanlyuserController {
     @Autowired
     User_Service userservice;
@@ -136,12 +136,12 @@ public class quanlyuserController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/test")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<?> find(@AuthenticationPrincipal User user){
-        if(user!=null){
-            return ResponseEntity.ok(userservice.findbyId(user.getId()));
-        }
-        return ResponseEntity.notFound().build();
-    }
+//    @GetMapping("/test")
+//    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+//    public ResponseEntity<?> find(@AuthenticationPrincipal User user){
+//        if(user!=null){
+//            return ResponseEntity.ok(userservice.findbyId(user.getId()));
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
 }

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/admin/category")
+@RequestMapping("/api-category")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @EnableCaching
 public class quanlycategoryController {

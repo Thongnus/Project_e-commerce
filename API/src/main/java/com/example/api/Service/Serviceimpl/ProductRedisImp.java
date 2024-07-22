@@ -7,7 +7,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.formula.functions.DProduct;
+import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ public class ProductRedisImp implements ProductRedis_Service {
     Redis_service redisService;
     @Autowired
     ObjectMapper objectMapper;
+     public static   String Allproduct="ALlproduct";
     @Override
     public String getKeyFrom(String id_category) {
         String Key = String.format("productsbyNamecategory:%s",id_category);
@@ -41,8 +44,8 @@ public class ProductRedisImp implements ProductRedis_Service {
 
 
     @Override
-    public void SaveAllproductBycategory(String key,ArrayList<Product> list) throws JsonProcessingException {
-
+    public void SaveAllproductBycategory(String namecategory,ArrayList<Product> list) throws JsonProcessingException {
+        String key = this.getKeyFrom(namecategory);
         String json = objectMapper.writeValueAsString(list);
         redisService.setkey(key,json);
     }
@@ -53,7 +56,28 @@ public class ProductRedisImp implements ProductRedis_Service {
     }
 
     @Override
-    public ArrayList<Product> getallProduct() {
-        return null;
+    public ArrayList<Product> getallProduct() throws JsonProcessingException {
+            String json = (String) redisService.getkey(Allproduct);
+            if(json!=null&&!json.isEmpty())
+            {
+                return objectMapper.readValue
+                    (json, new TypeReference<ArrayList<Product>>() {
+            });
+            }
+            return new ArrayList<Product>();
+    }
+
+    @Override
+    public void SaveAllproduct(ArrayList<Product> arr) throws JsonProcessingException {
+
+        String json = objectMapper.writeValueAsString(arr);
+        redisService.setkey(Allproduct,json);
+    }
+
+    @Override
+    public void clear(String namecategory) {
+        String Key = String.format("productsbyNamecategory:%s",namecategory);
+            redisService.delete_key(Key);
+            redisService.delete_key(Allproduct);
     }
 }
