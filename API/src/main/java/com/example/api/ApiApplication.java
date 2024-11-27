@@ -14,17 +14,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ApiApplication {
     @Autowired
     TwilioConfig twilioConfig;
-    @Autowired
-    NewService service;
-    @Autowired
-    RedisServiceimpl redisService;
-    @PostConstruct
-    public void TwilioInit() {
-
-    redisService.put("Sinhvien","name","Thông");
-        System.out.println( redisService.get("Sinhvien","name"));
-        Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
-    }
+//    @Autowired
+//    NewService service;
+//    @Autowired
+//    RedisServiceimpl redisService;
+//    @PostConstruct
+//    public void TwilioInit() {
+//
+//    redisService.put("Sinhvien","name","Thông");
+//        System.out.println( redisService.get("Sinhvien","name"));
+//        Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
+//    }
 
     public static void main (
 

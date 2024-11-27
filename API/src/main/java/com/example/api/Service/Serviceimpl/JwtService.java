@@ -63,7 +63,6 @@ public String extractUsernamefromRefeshToken(String token){
 
     public Claims extractAllClaims(String token){
         return Jwts.parserBuilder()
-
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
@@ -80,7 +79,7 @@ public String extractUsernamefromRefeshToken(String token){
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parse(authToken);
-            return true;
+            return !isTokenExpired(authToken);
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
@@ -96,7 +95,12 @@ public String extractUsernamefromRefeshToken(String token){
     public boolean validateJwtTokenrefesh(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKeyrefesh).build().parse(authToken);
-            return true;
+            if(isTokenExpiredrefesh(authToken))
+            {
+                log.error("JWT token is expired");
+                return false;
+            }
+               return true;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
@@ -106,7 +110,6 @@ public String extractUsernamefromRefeshToken(String token){
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
-
         return false;
     }
     public boolean isTokenExpired(String token) {

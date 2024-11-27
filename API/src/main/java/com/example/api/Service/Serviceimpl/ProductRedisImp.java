@@ -6,10 +6,7 @@ import com.example.api.Service.Redis_service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.poi.ss.formula.functions.DProduct;
-import org.apache.poi.ss.formula.functions.FinanceLib;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +23,8 @@ public class ProductRedisImp implements ProductRedis_Service {
      public static   String Allproduct="ALlproduct";
     @Override
     public String getKeyFrom(String id_category) {
-        String Key = String.format("productsbyNamecategory:%s",id_category);
 
-        return Key;
+        return String.format("productsbyNamecategory:%s",id_category);
     }
 
     @Override
@@ -55,8 +51,7 @@ public class ProductRedisImp implements ProductRedis_Service {
         redisService.delete_key(key);
     }
 
-    @Override
-    public ArrayList<Product> getallProduct() throws JsonProcessingException {
+    public <T> ArrayList<Product> getallProduct() throws JsonProcessingException {
             String json = (String) redisService.getkey(Allproduct);
             if(json!=null&&!json.isEmpty())
             {
@@ -64,7 +59,6 @@ public class ProductRedisImp implements ProductRedis_Service {
                     (json, new TypeReference<ArrayList<Product>>() {
             });
             }
-            return new ArrayList<Product>();
     }
 
     @Override

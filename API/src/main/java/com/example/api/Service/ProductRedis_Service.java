@@ -12,7 +12,7 @@ public interface ProductRedis_Service {
     ArrayList<Product> getallProductbynamecategory( String name_category ) throws JsonProcessingException;
     void SaveAllproductBycategory(String namecategory,ArrayList<Product> list) throws JsonProcessingException;
     void delete(String key);
-    public ArrayList<Product> getallProduct() throws JsonProcessingException;
+    public <T> ArrayList<Product> getallProduct() throws JsonProcessingException;
     void SaveAllproduct(ArrayList<Product> arr) throws JsonProcessingException;
     void clear(String namecategory);
 }

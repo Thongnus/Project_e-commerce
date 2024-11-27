@@ -1,12 +1,11 @@
 package com.example.api.RestController;
 
 import com.example.api.Entity.User;
-import com.example.api.Model.LoginReponse;
+import com.example.api.Model.LoginResponse;
 import com.example.api.Model.LoginRequest;
 import com.example.api.Service.Serviceimpl.JwtService;
 import com.example.api.Service.Serviceimpl.SmsService;
 import com.example.api.Service.Serviceimpl.UserServiceimp;
-import com.example.api.Service.Serviceimpl.User_impl;
 import com.example.api.Service.User_Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -40,41 +36,34 @@ public class LoginController {
             try {
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 User u = (User) authentication.getPrincipal();
 
             System.out.println(u);
             String jwt = jwtService.generatetoken((User) authentication.getPrincipal());
             String jwtrefesh =jwtService.generaterefeshtoken((User) authentication.getPrincipal());
-            return ResponseEntity.ok(new LoginReponse(jwt,u.getRoles(),u.getId(),jwtrefesh, jwtService.getExpirationTime()));
+            return ResponseEntity.ok(new LoginResponse(jwt,u.getId(),jwtrefesh));
         } catch (Exception e) {
             // Xác thực không thành công, trả về mã trạng thái 401 (Unauthorized)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("sai thông tin");
         }
     }
-    @PostMapping("/refreshToken")
-    public ResponseEntity<?> accessTokenFromRefreshToken(@RequestParam("refesh") String refreshToken) {
-        try {
-            if(jwtService.isTokenExpiredrefesh(refreshToken)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refresh token hết hạn");
-            }
-
-            String username = jwtService.extractUsernamefromRefeshToken(refreshToken);
-            User user = (User) userServiceimp.loadUserByUsername(username);
-
-            return ResponseEntity.ok(
-                    new LoginReponse(
-                            jwtService.generatetoken(user),
-                            user.getRoles(),
-                            user.getId(),
-                            jwtService.generaterefeshtoken(user),
-                            jwtService.getExpirationTime()
-                    )
-            );
-        } catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không hợp lệ");
+    private LoginResponse refreshAccessToken(String refreshToken) throws Exception {
+        if (!jwtService.validateJwtTokenrefesh(refreshToken)) {
+            throw new Exception("Refresh token hết hạn");
         }
+        String username = jwtService.extractUsernamefromRefeshToken(refreshToken);
+        User user = (User) userServiceimp.loadUserByUsername(username);
+        return new LoginResponse(
+                jwtService.generatetoken(user),
+                user.getId()
+        );
+    }
+    @PostMapping("/refreshToken")
+    public ResponseEntity<?> accessTokenFromRefreshToken(@RequestParam("refresh") String refreshToken) throws Exception {
+            LoginResponse response = refreshAccessToken(refreshToken);
+            return ResponseEntity.ok(response);
+
     }
 
     @PostMapping("/logout")

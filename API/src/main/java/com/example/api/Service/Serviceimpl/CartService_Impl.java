@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,6 +73,7 @@ public class CartService_Impl implements Cart_Service {
     }
 
     @Override
+    @Transactional
     public CartItem increaseQuantity(int idProduct, User user,String size) {
         Cart cart=cartRepository.findCartByIdUser(user);
         Optional<Product> product=productRepository.findById(idProduct);
@@ -92,6 +94,7 @@ public class CartService_Impl implements Cart_Service {
     }
 
     @Override
+    @Transactional
     public CartItem decreaseQuantity(int idProduct, User user,String size) {
         Cart cart=cartRepository.findCartByIdUser(user);
         Optional<Product> product=productRepository.findById(idProduct);
